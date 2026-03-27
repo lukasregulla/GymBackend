@@ -167,9 +167,3 @@ All endpoints except auth require a `Authorization: Bearer <token>` header.
 
 ---
 
-## Planned
-
-- `GET /api/exercises/{id}/history` — all sets for an exercise over time (for progress graphs)
-- `GET /api/exercises/{id}/personal-best` — heaviest set ever logged
-- `GET /api/dashboard/week` — this week's scheduled sessions and completion status
-- `GET /api/dashboard/recent` — last N completed sessions
