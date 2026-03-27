@@ -7,10 +7,12 @@ namespace GymBackend.Repository;
 public class ExerciseRepository(AppDbContext context) : IExerciseRepository
 {
     public Task<List<Exercise>> GetAllByUserAsync(int userId) =>
-        context.Exercises.Where(e => e.UserId == userId).ToListAsync();
+        context.Exercises.Include(e =>e.PersonalBestSet).Where(e => e.UserId == userId).ToListAsync();
 
     public Task<Exercise?> GetByIdAsync(int id, int userId) =>
-        context.Exercises.FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
+        context.Exercises
+        .Include(e => e.PersonalBestSet)
+        .FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
 
     public async Task<Exercise> CreateAsync(Exercise exercise)
     {

@@ -4,7 +4,7 @@ namespace GymBackend.Model.Dto.Template;
 
 public class CreateTemplateDto
 {
-    [Required] public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public string DayOfWeek { get; set; } = string.Empty;
+    [Required] [MaxLength(100)] public string Name { get; set; } = string.Empty;
+    [MaxLength(500)] public string Description { get; set; } = string.Empty;
+    [MaxLength(20)] public string DayOfWeek { get; set; } = string.Empty;
 }

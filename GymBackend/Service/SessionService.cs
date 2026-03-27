@@ -1,6 +1,7 @@
 using GymBackend.Exceptions;
 using GymBackend.Model;
 using GymBackend.Model.Dto.Session;
+using GymBackend.Model.Dto.Set;
 using GymBackend.Repository;
 
 namespace GymBackend.Service;
@@ -27,7 +28,19 @@ public class SessionService(
         ExerciseId = se.ExerciseId,
         ExerciseName = se.Exercise.Name,
         MuscleGroup = se.Exercise.MuscleGroup,
-        OrderIndex = se.OrderIndex
+        OrderIndex = se.OrderIndex,
+        Sets = se.Sets
+            .OrderBy(s => s.SetNumber)
+            .Select(s => new SetDto
+            {
+                Id = s.Id,
+                SetNumber = s.SetNumber,
+                WeightKg = s.WeightKg,
+                Reps = s.Reps,
+                IsPersonalBest = s.IsPersonalBest,
+                LoggedAt = s.LoggedAt
+            })
+            .ToList()
     };
 
     private static SessionDetailDto ToDetailDto(WorkoutSession s) => new()

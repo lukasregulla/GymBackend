@@ -5,10 +5,10 @@ using GymBackend.Repository;
 
 namespace GymBackend.Service;
 
-public class ExerciseService(IExerciseRepository repo) : IExerciseService
+public class ExerciseService(IExerciseRepository repo, ISetRepository setRepo) : IExerciseService
 {
     private static ExerciseDto ToDto(Exercise e) =>
-        new() { Id = e.Id, Name = e.Name, MuscleGroup = e.MuscleGroup, Notes = e.Notes };
+        new() { Id = e.Id, Name = e.Name, MuscleGroup = e.MuscleGroup, Notes = e.Notes, PersonalBest = e.PersonalBestSet?.WeightKg };
 
     public async Task<List<ExerciseDto>> GetAllAsync(int userId) =>
         (await repo.GetAllByUserAsync(userId)).Select(ToDto).ToList();
@@ -49,5 +49,34 @@ public class ExerciseService(IExerciseRepository repo) : IExerciseService
         if (await repo.IsUsedInSessionAsync(id, userId))
             throw new BadRequestException("Exercise is used in one or more workout sessions and cannot be deleted.");
         await repo.DeleteAsync(exercise);
+    }
+
+    public async Task<ExerciseProgressDto> GetProgressAsync(int exerciseId, int userId)
+    {
+        var exercise = await repo.GetByIdAsync(exerciseId, userId)
+            ?? throw new NotFoundException("Exercise not found.");
+
+        var sets = await setRepo.GetAllForExerciseByUserAsync(exerciseId, userId);
+
+        var history = sets
+            .GroupBy(s => s.SessionExercise.Session.ScheduledDate
+                          ?? DateOnly.FromDateTime(s.LoggedAt.Date))
+            .OrderBy(g => g.Key)
+            .Select(g => new ProgressPointDto
+            {
+                Date = g.Key,
+                BestWeight = g.Max(s => s.WeightKg),
+                TotalReps = g.Sum(s => s.Reps),
+                TotalSets = g.Count()
+            })
+            .ToList();
+
+        return new ExerciseProgressDto
+        {
+            ExerciseId = exercise.Id,
+            ExerciseName = exercise.Name,
+            PersonalBest = exercise.PersonalBestSet?.WeightKg ?? 0,
+            History = history
+        };
     }
 }

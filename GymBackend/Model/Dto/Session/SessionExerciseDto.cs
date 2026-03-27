@@ -1,3 +1,5 @@
+using GymBackend.Model.Dto.Set;
+
 namespace GymBackend.Model.Dto.Session;
 
 public class SessionExerciseDto
@@ -7,4 +9,5 @@ public class SessionExerciseDto
     public string ExerciseName { get; set; } = string.Empty;
     public string? MuscleGroup { get; set; }
     public int OrderIndex { get; set; }
+    public List<SetDto> Sets { get; set; } = [];
 }

@@ -1,12 +1,14 @@
 ﻿using GymBackend.Service;
 using GymBackend.Model.Dto.Auth;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using GymBackend.Exceptions;
 
 namespace GymBackend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [EnableRateLimiting("auth")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;

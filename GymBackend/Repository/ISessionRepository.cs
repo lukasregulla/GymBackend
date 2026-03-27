@@ -13,5 +13,6 @@ public interface ISessionRepository
     Task<SessionExercise?> GetSessionExerciseAsync(int sessionId, int sessionExerciseId, int userId);
     Task AddExerciseAsync(SessionExercise se);
     Task RemoveExerciseAsync(SessionExercise se);
+    Task<List<WorkoutSession>> GetRecentCompletedAsync(int userId, int count);
     Task SaveChangesAsync();
 }

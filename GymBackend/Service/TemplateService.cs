@@ -18,8 +18,8 @@ public class TemplateService(ITemplateRepository templateRepo, IExerciseReposito
             ExerciseName = te.Exercise.Name,
             MuscleGroup = te.Exercise.MuscleGroup,
             OrderIndex = te.OrderIndex,
-            DefaultSets = te.DeffaultSets,
-            DefaultReps = te.DeffaultReps
+            DefaultSets = te.DefaultSets,
+            DefaultReps = te.DefaultReps
         };
 
     private static TemplateDetailDto ToDetailDto(WorkoutTemplate t) =>
@@ -90,8 +90,8 @@ public class TemplateService(ITemplateRepository templateRepo, IExerciseReposito
             TemplateId = templateId,
             ExerciseId = dto.ExerciseId,
             OrderIndex = dto.OrderIndex,
-            DeffaultSets = dto.DefaultSets,
-            DeffaultReps = dto.DefaultReps
+            DefaultSets = dto.DefaultSets,
+            DefaultReps = dto.DefaultReps
         };
 
         await templateRepo.AddExerciseAsync(te);
@@ -103,8 +103,8 @@ public class TemplateService(ITemplateRepository templateRepo, IExerciseReposito
             ExerciseName = exercise.Name,
             MuscleGroup = exercise.MuscleGroup,
             OrderIndex = te.OrderIndex,
-            DefaultSets = te.DeffaultSets,
-            DefaultReps = te.DeffaultReps
+            DefaultSets = te.DefaultSets,
+            DefaultReps = te.DefaultReps
         };
     }
 

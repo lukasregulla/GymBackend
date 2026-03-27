@@ -28,6 +28,8 @@ public class SessionRepository(AppDbContext context) : ISessionRepository
             .Include(s => s.Template)
             .Include(s => s.SessionExercises)
                 .ThenInclude(se => se.Exercise)
+            .Include(s => s.SessionExercises)
+                .ThenInclude(se => se.Sets)
             .FirstOrDefaultAsync(s => s.Id == id && s.UserId == userId);
 
     public async Task<WorkoutSession> CreateAsync(WorkoutSession session)
@@ -67,6 +69,14 @@ public class SessionRepository(AppDbContext context) : ISessionRepository
         context.SessionExercises.Remove(se);
         await context.SaveChangesAsync();
     }
+
+    public Task<List<WorkoutSession>> GetRecentCompletedAsync(int userId, int count) =>
+        context.WorkoutSessions
+            .Include(s => s.Template)
+            .Where(s => s.UserId == userId && s.IsCompleted)
+            .OrderByDescending(s => s.CompletedAt)
+            .Take(count)
+            .ToListAsync();
 
     public Task SaveChangesAsync() => context.SaveChangesAsync();
 }

@@ -9,4 +9,5 @@ public interface IExerciseService
     Task<ExerciseDto> CreateAsync(CreateExerciseDto dto, int userId);
     Task<ExerciseDto> UpdateAsync(int id, UpdateExerciseDto dto, int userId);
     Task DeleteAsync(int id, int userId);
+    Task<ExerciseProgressDto> GetProgressAsync(int exerciseId, int userId);
 }

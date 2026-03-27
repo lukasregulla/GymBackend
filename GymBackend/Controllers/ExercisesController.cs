@@ -50,4 +50,11 @@ public class ExercisesController(IExerciseService exerciseService) : ControllerB
         catch (NotFoundException ex) { return NotFound(new { message = ex.Message }); }
         catch (BadRequestException ex) { return BadRequest(new { message = ex.Message }); }
     }
+
+    [HttpGet("{id}/progress")]
+    public async Task<IActionResult> GetProgress(int id)
+    {
+        try { return Ok(await exerciseService.GetProgressAsync(id, UserId)); }
+        catch (NotFoundException ex) { return NotFound(new { message = ex.Message }); }
+    }
 }
