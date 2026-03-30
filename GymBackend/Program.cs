@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.RateLimiting;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +26,10 @@ builder.Services.AddScoped<ISetRepository, SetRepository>();
 builder.Services.AddScoped<ISetService, SetService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        options.UseNpgsql(connectionString);
+});
 
 builder.Services.AddCors(options =>
 {
@@ -91,13 +95,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseRateLimiter();
-
-app.MapControllers();
-
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 }
+
+app.MapControllers();
 
 app.Run();
