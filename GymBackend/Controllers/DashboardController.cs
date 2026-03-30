@@ -2,6 +2,7 @@ using System.Security.Claims;
 using GymBackend.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace GymBackend.Controllers;
 
