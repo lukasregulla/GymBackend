@@ -14,6 +14,7 @@ public class SessionService(
     private static SessionDto ToDto(WorkoutSession s) => new()
     {
         Id = s.Id,
+        Name = s.Name,
         ScheduledDate = s.ScheduledDate,
         IsCompleted = s.IsCompleted,
         CompletedAt = s.CompletedAt,
@@ -46,6 +47,7 @@ public class SessionService(
     private static SessionDetailDto ToDetailDto(WorkoutSession s) => new()
     {
         Id = s.Id,
+        Name = s.Name,
         ScheduledDate = s.ScheduledDate,
         IsCompleted = s.IsCompleted,
         CompletedAt = s.CompletedAt,
@@ -73,6 +75,7 @@ public class SessionService(
         var session = new WorkoutSession
         {
             UserId = userId,
+            Name = dto.Name,
             TemplateId = dto.TemplateId,
             ScheduledDate = dto.ScheduledDate,
             Notes = dto.Notes

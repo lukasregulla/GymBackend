@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public DateOnly? ScheduledDate { get; set; }
         public DateTime? CompletedAt { get; set; }
+        public string? Name { get; set; }
         public string Notes { get; set; } = string.Empty;
         public bool IsCompleted { get; set; } = false;
 
