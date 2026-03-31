@@ -35,11 +35,16 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
+        var origins = new List<string>
+        {
+            "http://localhost:5173"
+        };
+
         var frontendUrl = builder.Configuration["FrontendUrl"];
-        var origins = new List<string> { "http://localhost:3000", "http://localhost:5173" };
-        if (!string.IsNullOrEmpty(frontendUrl))
+        if (!string.IsNullOrWhiteSpace(frontendUrl))
             origins.Add(frontendUrl);
-        policy.WithOrigins(origins.ToArray())
+
+        policy.WithOrigins(origins.Distinct().ToArray())
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
