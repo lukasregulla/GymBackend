@@ -14,11 +14,13 @@ namespace GymBackend.Service
     {
         private readonly IConfiguration _configuration;
         private readonly AppDbContext _context;
+        private readonly ISeedDataService _seedDataService;
 
-        public AuthService(IConfiguration configuration, AppDbContext context)
+        public AuthService(IConfiguration configuration, AppDbContext context, ISeedDataService seedDataService)
         {
             _configuration = configuration;
             _context = context;
+            _seedDataService = seedDataService;
         }
 
         public async Task<AuthResponseDto> Register(RegisterRequestDto registerRequest)
@@ -43,6 +45,8 @@ namespace GymBackend.Service
             };
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+
+            await _seedDataService.SeedForUserAsync(user.Id);
 
             return new AuthResponseDto
             {

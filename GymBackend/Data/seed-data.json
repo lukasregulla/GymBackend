@@ -1,0 +1,64 @@
+{
+  "exercises": [
+    { "name": "Bench Press",          "muscleGroup": "Chest",      "notes": "" },
+    { "name": "Incline Dumbbell Press","muscleGroup": "Chest",      "notes": "" },
+    { "name": "Cable Fly",            "muscleGroup": "Chest",      "notes": "" },
+    { "name": "Overhead Press",       "muscleGroup": "Shoulders",  "notes": "" },
+    { "name": "Lateral Raise",        "muscleGroup": "Shoulders",  "notes": "" },
+    { "name": "Tricep Pushdown",      "muscleGroup": "Triceps",    "notes": "" },
+    { "name": "Skull Crusher",        "muscleGroup": "Triceps",    "notes": "" },
+    { "name": "Pull-Up",              "muscleGroup": "Back",       "notes": "" },
+    { "name": "Barbell Row",          "muscleGroup": "Back",       "notes": "" },
+    { "name": "Lat Pulldown",         "muscleGroup": "Back",       "notes": "" },
+    { "name": "Face Pull",            "muscleGroup": "Rear Delts", "notes": "" },
+    { "name": "Barbell Curl",         "muscleGroup": "Biceps",     "notes": "" },
+    { "name": "Hammer Curl",          "muscleGroup": "Biceps",     "notes": "" },
+    { "name": "Squat",                "muscleGroup": "Legs",       "notes": "" },
+    { "name": "Romanian Deadlift",    "muscleGroup": "Legs",       "notes": "" },
+    { "name": "Leg Press",            "muscleGroup": "Legs",       "notes": "" },
+    { "name": "Leg Curl",             "muscleGroup": "Legs",       "notes": "" },
+    { "name": "Calf Raise",           "muscleGroup": "Legs",       "notes": "" },
+    { "name": "Deadlift",             "muscleGroup": "Back",       "notes": "" },
+    { "name": "Plank",                "muscleGroup": "Core",       "notes": "" }
+  ],
+  "templates": [
+    {
+      "name": "Push Day",
+      "description": "Chest, shoulders and triceps",
+      "dayOfWeek": "Monday",
+      "exercises": [
+        { "exerciseName": "Bench Press",           "orderIndex": 0, "defaultSets": 4, "defaultReps": 8  },
+        { "exerciseName": "Incline Dumbbell Press","orderIndex": 1, "defaultSets": 3, "defaultReps": 10 },
+        { "exerciseName": "Cable Fly",             "orderIndex": 2, "defaultSets": 3, "defaultReps": 12 },
+        { "exerciseName": "Overhead Press",        "orderIndex": 3, "defaultSets": 3, "defaultReps": 10 },
+        { "exerciseName": "Lateral Raise",         "orderIndex": 4, "defaultSets": 3, "defaultReps": 15 },
+        { "exerciseName": "Tricep Pushdown",       "orderIndex": 5, "defaultSets": 3, "defaultReps": 12 }
+      ]
+    },
+    {
+      "name": "Pull Day",
+      "description": "Back and biceps",
+      "dayOfWeek": "Wednesday",
+      "exercises": [
+        { "exerciseName": "Pull-Up",      "orderIndex": 0, "defaultSets": 4, "defaultReps": 8  },
+        { "exerciseName": "Barbell Row",  "orderIndex": 1, "defaultSets": 4, "defaultReps": 8  },
+        { "exerciseName": "Lat Pulldown", "orderIndex": 2, "defaultSets": 3, "defaultReps": 10 },
+        { "exerciseName": "Face Pull",    "orderIndex": 3, "defaultSets": 3, "defaultReps": 15 },
+        { "exerciseName": "Barbell Curl", "orderIndex": 4, "defaultSets": 3, "defaultReps": 10 },
+        { "exerciseName": "Hammer Curl",  "orderIndex": 5, "defaultSets": 3, "defaultReps": 12 }
+      ]
+    },
+    {
+      "name": "Leg Day",
+      "description": "Quads, hamstrings and calves",
+      "dayOfWeek": "Friday",
+      "exercises": [
+        { "exerciseName": "Squat",             "orderIndex": 0, "defaultSets": 4, "defaultReps": 6  },
+        { "exerciseName": "Romanian Deadlift", "orderIndex": 1, "defaultSets": 3, "defaultReps": 10 },
+        { "exerciseName": "Leg Press",         "orderIndex": 2, "defaultSets": 3, "defaultReps": 12 },
+        { "exerciseName": "Leg Curl",          "orderIndex": 3, "defaultSets": 3, "defaultReps": 12 },
+        { "exerciseName": "Calf Raise",        "orderIndex": 4, "defaultSets": 4, "defaultReps": 15 }
+      ]
+    }
+  ]
+}
