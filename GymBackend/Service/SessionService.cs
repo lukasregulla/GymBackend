@@ -70,6 +70,17 @@ public class SessionService(
         return ToDetailDto(session);
     }
 
+    private async Task<List<Set>> CopyLastSetsAsync(int exerciseId, int userId) =>
+        (await sessionRepo.GetLastSetsForExerciseAsync(exerciseId, userId))
+            .Select(s => new Set
+            {
+                SetNumber = s.SetNumber,
+                WeightKg = s.WeightKg,
+                Reps = s.Reps,
+                IsPersonalBest = false,
+                LoggedAt = DateTime.UtcNow
+            }).ToList();
+
     public async Task<SessionDto> CreateAsync(CreateSessionDto dto, int userId)
     {
         var session = new WorkoutSession
@@ -94,6 +105,9 @@ public class SessionService(
                     OrderIndex = te.OrderIndex
                 })
                 .ToList();
+
+            foreach (var se in session.SessionExercises)
+                se.Sets = await CopyLastSetsAsync(se.ExerciseId, userId);
         }
 
         await sessionRepo.CreateAsync(session);
@@ -134,6 +148,7 @@ public class SessionService(
             ExerciseId = dto.ExerciseId,
             OrderIndex = dto.OrderIndex
         };
+        se.Sets = await CopyLastSetsAsync(dto.ExerciseId, userId);
 
         await sessionRepo.AddExerciseAsync(se);
 
@@ -143,7 +158,16 @@ public class SessionService(
             ExerciseId = exercise.Id,
             ExerciseName = exercise.Name,
             MuscleGroup = exercise.MuscleGroup,
-            OrderIndex = se.OrderIndex
+            OrderIndex = se.OrderIndex,
+            Sets = se.Sets.OrderBy(s => s.SetNumber).Select(s => new SetDto
+            {
+                Id = s.Id,
+                SetNumber = s.SetNumber,
+                WeightKg = s.WeightKg,
+                Reps = s.Reps,
+                IsPersonalBest = s.IsPersonalBest,
+                LoggedAt = s.LoggedAt
+            }).ToList()
         };
     }
 

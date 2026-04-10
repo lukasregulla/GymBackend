@@ -78,5 +78,20 @@ public class SessionRepository(AppDbContext context) : ISessionRepository
             .Take(count)
             .ToListAsync();
 
+    public async Task<List<Set>> GetLastSetsForExerciseAsync(int exerciseId, int userId)
+    {
+        var lastSe = await context.SessionExercises
+            .Include(se => se.Sets)
+            .Where(se =>
+                se.ExerciseId == exerciseId &&
+                se.Session.UserId == userId &&
+                se.Session.IsCompleted &&
+                se.Sets.Any())
+            .OrderByDescending(se => se.Session.CompletedAt)
+            .FirstOrDefaultAsync();
+
+        return lastSe?.Sets.OrderBy(s => s.SetNumber).ToList() ?? [];
+    }
+
     public Task SaveChangesAsync() => context.SaveChangesAsync();
 }
