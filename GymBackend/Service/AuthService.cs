@@ -1,10 +1,13 @@
-﻿using GymBackend.Data;
+using GymBackend.Data;
+using GymBackend.Interfaces;
 using GymBackend.Model;
 using Microsoft.EntityFrameworkCore;
 using GymBackend.Model.Dto.Auth;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using GymBackend.Exceptions;
 
@@ -15,13 +18,18 @@ namespace GymBackend.Service
         private readonly IConfiguration _configuration;
         private readonly AppDbContext _context;
         private readonly ISeedDataService _seedDataService;
+        private readonly IEmailService _emailService;
 
-        public AuthService(IConfiguration configuration, AppDbContext context, ISeedDataService seedDataService)
+        public AuthService(IConfiguration configuration, AppDbContext context, ISeedDataService seedDataService, IEmailService emailService)
         {
             _configuration = configuration;
             _context = context;
             _seedDataService = seedDataService;
+            _emailService = emailService;
         }
+
+        private static string HashToken(string rawToken)
+            => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(rawToken))).ToLowerInvariant();
 
         public async Task<AuthResponseDto> Register(RegisterRequestDto registerRequest)
         {
@@ -48,6 +56,15 @@ namespace GymBackend.Service
 
             await _seedDataService.SeedForUserAsync(user.Id);
 
+            var rawToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+            user.EmailConfirmationToken = HashToken(rawToken);
+            user.EmailConfirmationTokenExpiry = DateTime.UtcNow.AddDays(1);
+            await _context.SaveChangesAsync();
+
+            var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(rawToken));
+            var link = $"{_configuration["Frontend:BaseUrl"]}/confirm-email?userId={user.Id}&token={encodedToken}";
+            await _emailService.SendAsync(user.Email, "Confirm your email", $"Please confirm your email: {link}");
+
             return new AuthResponseDto
             {
                 Token = GenerateJwtToken(user),
@@ -63,11 +80,76 @@ namespace GymBackend.Service
             {
                 throw new UnauthorizedException("Invalid email or password.");
             }
+            if (!user.EmailConfirmed)
+            {
+                throw new UnauthorizedException("Please confirm your email before logging in.");
+            }
             return new AuthResponseDto
             {
                 Token = GenerateJwtToken(user),
                 Username = user.Username
             };
+        }
+
+        public async Task ConfirmEmailAsync(ConfirmEmailRequestDto request)
+        {
+            if (!int.TryParse(request.UserId, out var userId))
+            {
+                throw new BadRequestException("Invalid confirmation link.");
+            }
+
+            var user = await _context.Users.FindAsync(userId);
+            var rawToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.Token));
+
+            if (user == null
+                || user.EmailConfirmationToken == null
+                || user.EmailConfirmationToken != HashToken(rawToken)
+                || user.EmailConfirmationTokenExpiry < DateTime.UtcNow)
+            {
+                throw new BadRequestException("Invalid confirmation link.");
+            }
+
+            user.EmailConfirmed = true;
+            user.EmailConfirmationToken = null;
+            user.EmailConfirmationTokenExpiry = null;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task ForgotPasswordAsync(ForgotPasswordRequestDto request)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            if (user == null)
+            {
+                return;
+            }
+
+            var rawToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+            user.PasswordResetToken = HashToken(rawToken);
+            user.PasswordResetTokenExpiry = DateTime.UtcNow.AddHours(1);
+            await _context.SaveChangesAsync();
+
+            var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(rawToken));
+            var link = $"{_configuration["Frontend:BaseUrl"]}/reset-password?email={Uri.EscapeDataString(request.Email)}&token={encodedToken}";
+            await _emailService.SendAsync(user.Email, "Reset your password", $"Reset your password: {link}");
+        }
+
+        public async Task ResetPasswordAsync(ResetPasswordRequestDto request)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            var rawToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.Token));
+
+            if (user == null
+                || user.PasswordResetToken == null
+                || user.PasswordResetToken != HashToken(rawToken)
+                || user.PasswordResetTokenExpiry < DateTime.UtcNow)
+            {
+                throw new BadRequestException("Invalid or expired reset link.");
+            }
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            user.PasswordResetToken = null;
+            user.PasswordResetTokenExpiry = null;
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> DeleteUserByEmail(string email)

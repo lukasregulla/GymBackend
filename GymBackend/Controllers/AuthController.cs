@@ -1,4 +1,4 @@
-﻿using GymBackend.Service;
+using GymBackend.Service;
 using GymBackend.Model.Dto.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -16,6 +16,7 @@ namespace GymBackend.Controllers
         {
             _authService = authService;
         }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerRequest)
         {
@@ -33,7 +34,8 @@ namespace GymBackend.Controllers
                 return StatusCode(500, new { message = "An error occurred while processing your request." });
             }
         }
-[HttpPost("login")]
+
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequest)
         {
             try
@@ -44,6 +46,56 @@ namespace GymBackend.Controllers
             catch (UnauthorizedException ex)
             {
                 return Unauthorized(new { message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "An error occurred while processing your request." });
+            }
+        }
+
+        [HttpPost("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequestDto request)
+        {
+            try
+            {
+                await _authService.ConfirmEmailAsync(request);
+                return Ok(new { message = "Email confirmed." });
+            }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "An error occurred while processing your request." });
+            }
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDto request)
+        {
+            try
+            {
+                await _authService.ForgotPasswordAsync(request);
+                return Ok(new { message = "If that email exists, a reset link has been sent." });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "An error occurred while processing your request." });
+            }
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDto request)
+        {
+            try
+            {
+                await _authService.ResetPasswordAsync(request);
+                return Ok(new { message = "Password reset successfully." });
+            }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception)
             {

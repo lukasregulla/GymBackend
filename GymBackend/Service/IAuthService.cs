@@ -10,5 +10,8 @@ namespace GymBackend.Service
         Task<AuthResponseDto> Login(LoginRequestDto loginRequest);
         Task<AuthResponseDto> Register(RegisterRequestDto registerRequest);
         Task<bool> DeleteUserByEmail(string email);
+        Task ConfirmEmailAsync(ConfirmEmailRequestDto request);
+        Task ForgotPasswordAsync(ForgotPasswordRequestDto request);
+        Task ResetPasswordAsync(ResetPasswordRequestDto request);
     }
 }
