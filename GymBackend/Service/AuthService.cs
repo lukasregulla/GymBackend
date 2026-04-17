@@ -63,7 +63,30 @@ namespace GymBackend.Service
 
             var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(rawToken));
             var link = $"{_configuration["Frontend:BaseUrl"]}/confirm-email?userId={user.Id}&token={encodedToken}";
-            await _emailService.SendAsync(user.Email, "Confirm your email", $"Please confirm your email: {link}");
+
+            var body = $@"
+<div style=""font-family:Arial,sans-serif;line-height:1.6;color:#111;max-width:560px;margin:0 auto;padding:24px;"">
+  <h2 style=""margin-bottom:8px;"">Confirm your email</h2>
+  <p style=""margin:0 0 16px 0;"">
+    Welcome to GymTracker. Confirm your email address to activate your account.
+  </p>
+
+  <p style=""margin:0 0 24px 0;"">
+    <a href=""{link}""
+       style=""display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:600;"">
+      Confirm Email
+    </a>
+  </p>
+
+  <p style=""font-size:14px;color:#555;margin:0 0 8px 0;"">
+    If the button doesn't work, copy and paste this link into your browser:
+  </p>
+  <p style=""font-size:14px;word-break:break-all;margin:0;"">
+    <a href=""{link}"">{link}</a>
+  </p>
+</div>";
+
+            await _emailService.SendAsync(user.Email, "Confirm your email", body);
 
             return new AuthResponseDto
             {
@@ -130,7 +153,37 @@ namespace GymBackend.Service
 
             var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(rawToken));
             var link = $"{_configuration["Frontend:BaseUrl"]}/reset-password?email={Uri.EscapeDataString(request.Email)}&token={encodedToken}";
-            await _emailService.SendAsync(user.Email, "Reset your password", $"Reset your password: {link}");
+
+            var body = $@"
+<div style=""font-family:Arial,sans-serif;line-height:1.6;color:#111;max-width:560px;margin:0 auto;padding:24px;"">
+  <h2 style=""margin-bottom:8px;"">Reset your password</h2>
+  <p style=""margin:0 0 16px 0;"">
+    We received a request to reset your GymTracker password.
+  </p>
+  <p style=""margin:0 0 24px 0;"">
+    Click the button below to choose a new password.
+  </p>
+
+  <p style=""margin:0 0 24px 0;"">
+    <a href=""{link}""
+       style=""display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:600;"">
+      Reset Password
+    </a>
+  </p>
+
+  <p style=""font-size:14px;color:#555;margin:0 0 8px 0;"">
+    If the button doesn't work, copy and paste this link into your browser:
+  </p>
+  <p style=""font-size:14px;word-break:break-all;margin:0 0 24px 0;"">
+    <a href=""{link}"">{link}</a>
+  </p>
+
+  <p style=""font-size:14px;color:#555;margin:0;"">
+    If you didn’t request this, you can safely ignore this email.
+  </p>
+</div>";
+
+            await _emailService.SendAsync(user.Email, "Reset your password", body);
         }
 
         public async Task ResetPasswordAsync(ResetPasswordRequestDto request)
