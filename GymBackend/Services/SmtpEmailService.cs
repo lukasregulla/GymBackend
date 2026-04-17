@@ -28,6 +28,7 @@ namespace GymBackend.Services
             };
 
             var message = new MailMessage(from, to, subject, body);
+            message.IsBodyHtml = true;
             await client.SendMailAsync(message);
         }
     }
