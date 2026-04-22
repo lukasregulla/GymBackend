@@ -37,6 +37,8 @@ public class RunSessionService(IRunSessionRepository repo) : IRunSessionService
             ScheduledDate = dto.ScheduledDate,
             Notes = dto.Notes,
             SessionType = "Run",
+            IsCompleted = true,
+            CompletedAt = DateTime.UtcNow,
             RunDetail = new RunDetail
             {
                 DistanceKm = dto.DistanceKm,

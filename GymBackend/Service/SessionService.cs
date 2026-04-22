@@ -20,7 +20,8 @@ public class SessionService(
         CompletedAt = s.CompletedAt,
         Notes = s.Notes,
         TemplateId = s.TemplateId,
-        TemplateName = s.Template?.Name
+        TemplateName = s.Template?.Name,
+        SessionType = s.SessionType
     };
 
     private static SessionExerciseDto ToExerciseDto(SessionExercise se) => new()
@@ -54,6 +55,7 @@ public class SessionService(
         Notes = s.Notes,
         TemplateId = s.TemplateId,
         TemplateName = s.Template?.Name,
+        SessionType = s.SessionType,
         Exercises = s.SessionExercises
             .OrderBy(se => se.OrderIndex)
             .Select(ToExerciseDto)
