@@ -11,7 +11,7 @@ namespace GymBackend.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public class SessionsController(ISessionService sessionService, ISetService setService) : ControllerBase
+public class SessionsController(ISessionService sessionService, ISetService setService, IRunSessionService runSessionService) : ControllerBase
 {
     private int UserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
@@ -107,6 +107,28 @@ public class SessionsController(ISessionService sessionService, ISetService setS
             await setService.DeleteSetAsync(sessionId, sessionExerciseId, setId, UserId);
             return NoContent();
         }
+        catch (NotFoundException ex) { return NotFound(new { message = ex.Message }); }
+    }
+
+    [HttpPost("run")]
+    public async Task<IActionResult> CreateRunSession([FromBody] CreateRunSessionDto dto)
+    {
+        try
+        {
+            var result = await runSessionService.CreateAsync(dto, UserId);
+            return CreatedAtAction(nameof(GetRunById), new { id = result.Id }, result);
+        }
+        catch (BadRequestException ex) { return BadRequest(new { message = ex.Message }); }
+    }
+
+    [HttpGet("runs")]
+    public async Task<IActionResult> GetAllRuns() =>
+        Ok(await runSessionService.GetAllAsync(UserId));
+
+    [HttpGet("runs/{id}")]
+    public async Task<IActionResult> GetRunById(int id)
+    {
+        try { return Ok(await runSessionService.GetByIdAsync(id, UserId)); }
         catch (NotFoundException ex) { return NotFound(new { message = ex.Message }); }
     }
 }

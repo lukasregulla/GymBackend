@@ -17,5 +17,7 @@
 
         public ICollection<SessionExercise> SessionExercises { get; set; } = new List<SessionExercise>();
 
+        public string SessionType { get; set; } = "Strength";
+        public RunDetail? RunDetail { get; set; }
     }
 }

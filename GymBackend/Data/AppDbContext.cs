@@ -17,6 +17,7 @@ namespace GymBackend.Data
         public DbSet<WorkoutSession> WorkoutSessions { get; set; } = null!;
         public DbSet<SessionExercise> SessionExercises { get; set; } = null!;
         public DbSet<Set> Sets { get; set; } = null!;
+        public DbSet<RunDetail> RunDetails { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -57,6 +58,13 @@ namespace GymBackend.Data
                 .HasOne(se => se.Exercise)
                 .WithMany(e => e.SessionExercises)
                 .HasForeignKey(se => se.ExerciseId);
+
+            // One-to-one: WorkoutSession → RunDetail
+            modelBuilder.Entity<WorkoutSession>()
+                .HasOne(ws => ws.RunDetail)
+                .WithOne(rd => rd.WorkoutSession)
+                .HasForeignKey<RunDetail>(rd => rd.WorkoutSessionId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
