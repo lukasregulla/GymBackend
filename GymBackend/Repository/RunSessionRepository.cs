@@ -13,6 +13,13 @@ public class RunSessionRepository(AppDbContext context) : IRunSessionRepository
         return session;
     }
 
+    public async Task<WorkoutSession> UpdateAsync(WorkoutSession session)
+    {
+        context.WorkoutSessions.Update(session);
+        await context.SaveChangesAsync();
+        return session;
+    }
+
     public Task<List<WorkoutSession>> GetAllByUserAsync(int userId) =>
         context.WorkoutSessions
             .Include(s => s.RunDetail)

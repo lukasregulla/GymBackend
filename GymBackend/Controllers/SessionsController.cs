@@ -121,6 +121,25 @@ public class SessionsController(ISessionService sessionService, ISetService setS
         catch (BadRequestException ex) { return BadRequest(new { message = ex.Message }); }
     }
 
+    [HttpPost("run/schedule")]
+    public async Task<IActionResult> ScheduleRunSession([FromBody] ScheduleRunSessionDto dto)
+    {
+        try
+        {
+            var result = await runSessionService.ScheduleAsync(dto, UserId);
+            return CreatedAtAction(nameof(GetRunById), new { id = result.Id }, result);
+        }
+        catch (BadRequestException ex) { return BadRequest(new { message = ex.Message }); }
+    }
+
+    [HttpPatch("runs/{id}/complete")]
+    public async Task<IActionResult> CompleteRunSession(int id, [FromBody] CompleteScheduledRunDto dto)
+    {
+        try { return Ok(await runSessionService.CompleteAsync(id, dto, UserId)); }
+        catch (NotFoundException ex) { return NotFound(new { message = ex.Message }); }
+        catch (BadRequestException ex) { return BadRequest(new { message = ex.Message }); }
+    }
+
     [HttpGet("runs")]
     public async Task<IActionResult> GetAllRuns() =>
         Ok(await runSessionService.GetAllAsync(UserId));

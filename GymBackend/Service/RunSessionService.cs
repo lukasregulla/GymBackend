@@ -54,6 +54,59 @@ public class RunSessionService(IRunSessionRepository repo) : IRunSessionService
         return ToDto(created!);
     }
 
+    public async Task<RunSessionDto> ScheduleAsync(ScheduleRunSessionDto dto, int userId)
+    {
+        var session = new WorkoutSession
+        {
+            UserId = userId,
+            Name = dto.Name,
+            ScheduledDate = dto.ScheduledDate,
+            Notes = dto.Notes,
+            SessionType = "Run",
+            IsCompleted = false,
+            CompletedAt = null,
+            RunDetail = new RunDetail
+            {
+                DistanceKm = dto.DistanceKm,
+                DurationSeconds = null,
+                AveragePaceSecondsPerKm = null,
+                RunType = dto.RunType ?? string.Empty
+            }
+        };
+
+        await repo.CreateAsync(session);
+
+        var created = await repo.GetByIdAsync(session.Id, userId);
+        return ToDto(created!);
+    }
+
+    public async Task<RunSessionDto> CompleteAsync(int id, CompleteScheduledRunDto dto, int userId)
+    {
+        var session = await repo.GetByIdAsync(id, userId)
+            ?? throw new NotFoundException("Run session not found.");
+
+        if (session.IsCompleted)
+            throw new BadRequestException("Run session is already completed.");
+
+        session.IsCompleted = true;
+        session.CompletedAt = DateTime.UtcNow;
+
+        if (dto.Notes is not null)
+            session.Notes = dto.Notes;
+
+        session.RunDetail!.DistanceKm = dto.DistanceKm;
+        session.RunDetail.DurationSeconds = dto.DurationSeconds;
+        session.RunDetail.AveragePaceSecondsPerKm = (int)(dto.DurationSeconds / (double)dto.DistanceKm);
+
+        if (dto.RunType is not null)
+            session.RunDetail.RunType = dto.RunType;
+
+        await repo.UpdateAsync(session);
+
+        var updated = await repo.GetByIdAsync(id, userId);
+        return ToDto(updated!);
+    }
+
     public async Task<List<RunSessionDto>> GetAllAsync(int userId) =>
         (await repo.GetAllByUserAsync(userId)).Select(ToDto).ToList();
 
