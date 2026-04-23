@@ -14,6 +14,7 @@ public class DashboardService(ISessionRepository sessionRepo) : IDashboardServic
         IsCompleted = s.IsCompleted,
         CompletedAt = s.CompletedAt,
         Notes = s.Notes,
+        Name = s.Name,
         TemplateId = s.TemplateId,
         TemplateName = s.Template?.Name
     };
