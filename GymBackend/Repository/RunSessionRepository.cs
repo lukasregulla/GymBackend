@@ -15,7 +15,6 @@ public class RunSessionRepository(AppDbContext context) : IRunSessionRepository
 
     public async Task<WorkoutSession> UpdateAsync(WorkoutSession session)
     {
-        context.WorkoutSessions.Update(session);
         await context.SaveChangesAsync();
         return session;
     }
