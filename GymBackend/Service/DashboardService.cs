@@ -16,7 +16,8 @@ public class DashboardService(ISessionRepository sessionRepo) : IDashboardServic
         Notes = s.Notes,
         Name = s.Name,
         TemplateId = s.TemplateId,
-        TemplateName = s.Template?.Name
+        TemplateName = s.Template?.Name,
+        SessionType = s.SessionType
     };
 
     public async Task<WeeklyDashboardDto> GetWeekAsync(int userId)
