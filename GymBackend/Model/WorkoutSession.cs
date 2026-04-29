@@ -4,9 +4,12 @@
     {
         public int Id { get; set; }
         public DateOnly? ScheduledDate { get; set; }
+        public TimeOnly? ScheduledStartTime { get; set; }
+        public int? EstimatedDurationMinutes { get; set; } = 60;
         public DateTime? CompletedAt { get; set; }
         public string? Name { get; set; }
         public string Notes { get; set; } = string.Empty;
+
         public bool IsCompleted { get; set; } = false;
 
         public int UserId { get; set; }

@@ -16,6 +16,8 @@ public class SessionService(
         Id = s.Id,
         Name = s.Name,
         ScheduledDate = s.ScheduledDate,
+        ScheduledStartTime = s.ScheduledStartTime,
+        EstimatedDurationMinutes = s.EstimatedDurationMinutes,
         IsCompleted = s.IsCompleted,
         CompletedAt = s.CompletedAt,
         Notes = s.Notes,
@@ -91,6 +93,8 @@ public class SessionService(
             Name = dto.Name,
             TemplateId = dto.TemplateId,
             ScheduledDate = dto.ScheduledDate,
+            ScheduledStartTime = dto.ScheduledStartTime,
+            EstimatedDurationMinutes = dto.EstimatedDurationMinutes ?? 60,
             Notes = dto.Notes
         };
 

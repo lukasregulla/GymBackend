@@ -17,7 +17,10 @@ public class SessionRepository(AppDbContext context) : ISessionRepository
         if (to.HasValue)
             query = query.Where(s => s.ScheduledDate <= to.Value);
 
-        return query.ToListAsync();
+        return query
+            .OrderBy(s => s.ScheduledDate)
+            .ThenBy(s => s.ScheduledStartTime)
+            .ToListAsync();
     }
 
     public Task<WorkoutSession?> GetByIdAsync(int id, int userId) =>
