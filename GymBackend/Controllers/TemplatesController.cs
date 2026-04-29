@@ -62,12 +62,12 @@ public class TemplatesController(ITemplateService templateService) : ControllerB
         catch (BadRequestException ex) { return BadRequest(new { message = ex.Message }); }
     }
 
-    [HttpDelete("{id}/exercises/{exerciseId}")]
-    public async Task<IActionResult> RemoveExercise(int id, int exerciseId)
+    [HttpDelete("{id}/exercises/{templateExerciseId}")]
+    public async Task<IActionResult> RemoveExercise(int id, int templateExerciseId)
     {
         try
         {
-            await templateService.RemoveExerciseAsync(id, exerciseId, UserId);
+            await templateService.RemoveExerciseAsync(id, templateExerciseId, UserId);
             return NoContent();
         }
         catch (NotFoundException ex) { return NotFound(new { message = ex.Message }); }

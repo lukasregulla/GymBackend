@@ -108,9 +108,9 @@ public class TemplateService(ITemplateRepository templateRepo, IExerciseReposito
         };
     }
 
-    public async Task RemoveExerciseAsync(int templateId, int exerciseId, int userId)
+    public async Task RemoveExerciseAsync(int templateId, int templateExerciseId, int userId)
     {
-        var te = await templateRepo.GetTemplateExerciseAsync(templateId, exerciseId, userId)
+        var te = await templateRepo.GetTemplateExerciseAsync(templateId, templateExerciseId, userId)
             ?? throw new NotFoundException("Exercise not found in template.");
         await templateRepo.RemoveExerciseAsync(te);
     }

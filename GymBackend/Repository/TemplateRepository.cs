@@ -48,11 +48,11 @@ public class TemplateRepository(AppDbContext context) : ITemplateRepository
         return templateExercise;
     }
 
-    public Task<TemplateExercise?> GetTemplateExerciseAsync(int templateId, int exerciseId, int userId) =>
+    public Task<TemplateExercise?> GetTemplateExerciseAsync(int templateId, int templateExerciseId, int userId) =>
         context.TemplateExercises
             .FirstOrDefaultAsync(te =>
                 te.TemplateId == templateId &&
-                te.ExerciseId == exerciseId &&
+                te.Id == templateExerciseId &&
                 te.Template.UserId == userId);
 
     public async Task RemoveExerciseAsync(TemplateExercise templateExercise)
