@@ -13,6 +13,7 @@ namespace GymBackend.Model
         public DateTime? EmailConfirmationTokenExpiry { get; set; }
         public string? PasswordResetToken { get; set; }
         public DateTime? PasswordResetTokenExpiry { get; set; }
+        public string? CalendarSubscriptionToken { get; set; }
 
         public ICollection<Exercise> exercises { get; set; } = new List<Exercise>();
         public ICollection<WorkoutTemplate> workoutTemplates { get; set; } = new List<WorkoutTemplate>();
