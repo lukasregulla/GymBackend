@@ -1,13 +1,14 @@
+using System.Threading.RateLimiting;
 using GymBackend.Data;
 using GymBackend.Interfaces;
 using GymBackend.Middleware;
+using GymBackend.Repositories;
 using GymBackend.Repository;
 using GymBackend.Service;
 using GymBackend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.RateLimiting;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 using Scalar.AspNetCore;
 
@@ -48,6 +49,8 @@ builder.Services.AddScoped<IRunSessionService, RunSessionService>();
 builder.Services.AddScoped<ISetRepository, SetRepository>();
 builder.Services.AddScoped<ISetService, SetService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<ICalendarRepository, CalendarRepository>();
+builder.Services.AddScoped<ICalendarService, CalendarService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
