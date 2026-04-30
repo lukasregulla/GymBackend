@@ -61,6 +61,8 @@ public class RunSessionService(IRunSessionRepository repo) : IRunSessionService
             UserId = userId,
             Name = dto.Name,
             ScheduledDate = dto.ScheduledDate,
+            ScheduledStartTime = dto.ScheduledStartTime,
+            EstimatedDurationMinutes = dto.EstimatedDurationMinutes ?? 60,
             Notes = dto.Notes,
             SessionType = "Run",
             IsCompleted = false,

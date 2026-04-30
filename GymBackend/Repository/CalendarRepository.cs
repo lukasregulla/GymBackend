@@ -26,8 +26,10 @@ namespace GymBackend.Repositories
                     s.ScheduledStartTime != null &&
                     s.ScheduledDate >= today &&
                     s.ScheduledDate <= maxDate)
+                .Include(s => s.Template)
                 .Include(s => s.SessionExercises)
                     .ThenInclude(se => se.Exercise)
+                .Include(s => s.RunDetail)
                 .OrderBy(s => s.ScheduledDate)
                 .ThenBy(s => s.ScheduledStartTime)
                 .ToListAsync();

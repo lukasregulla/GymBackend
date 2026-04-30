@@ -82,18 +82,14 @@ namespace GymBackend.Services
                 var durationMinutes = session.EstimatedDurationMinutes ?? 60;
                 var endDateTime = startDateTime.AddMinutes(durationMinutes);
 
-                var title = string.IsNullOrWhiteSpace(session.Name)
-                    ? "Workout Session"
-                    : session.Name;
+                var title = GetCalendarTitle(session);
 
                 var exerciseLines = session.SessionExercises
                     .OrderBy(se => se.Id)
                     .Select(se => $"- {se.Exercise.Name}")
                     .ToList();
 
-                var description = exerciseLines.Any()
-                    ? $"Exercises:\n{string.Join("\n", exerciseLines)}"
-                    : "No exercises added yet.";
+                var description = BuildSessionDescription(session);
 
                 AppendIcsLine(sb, "BEGIN:VEVENT");
                 AppendIcsLine(sb, $"UID:{session.Id}@gymtracker");
@@ -130,5 +126,83 @@ namespace GymBackend.Services
                 .Replace("\r\n", "\\n")
                 .Replace("\n", "\\n");
         }
+
+        private static string GetCalendarTitle(Model.WorkoutSession session)
+        {
+            if (!string.IsNullOrWhiteSpace(session.Name))
+            {
+                return session.Name;
+            }
+
+            if (!string.IsNullOrWhiteSpace(session.Template?.Name))
+            {
+                return session.Template.Name;
+            }
+
+            if (session.SessionType == "Run")
+            {
+                return "Run";
+            }
+
+            return "Workout Session";
+        }
+
+        private static string BuildSessionDescription(Model.WorkoutSession session)
+        {
+            if (session.SessionType == "Run")
+            {
+                var lines = new List<string>
+        {
+            "Run Session"
+        };
+
+                if (!string.IsNullOrWhiteSpace(session.RunDetail?.RunType))
+                {
+                    lines.Add($"Type: {session.RunDetail.RunType}");
+                }
+
+                if (session.RunDetail?.DistanceKm != null)
+                {
+                    lines.Add($"Distance: {session.RunDetail.DistanceKm} km");
+                }
+
+                if (session.EstimatedDurationMinutes != null)
+                {
+                    lines.Add($"Estimated duration: {session.EstimatedDurationMinutes} minutes");
+                }
+
+                if (!string.IsNullOrWhiteSpace(session.Notes))
+                {
+                    lines.Add($"Notes: {session.Notes}");
+                }
+
+                return string.Join("\n", lines);
+            }
+
+            var exerciseLines = session.SessionExercises
+                .OrderBy(se => se.Id)
+                .Select(se => $"- {se.Exercise.Name}")
+                .ToList();
+
+            var strengthLines = new List<string>();
+
+            if (exerciseLines.Any())
+            {
+                strengthLines.Add("Exercises:");
+                strengthLines.AddRange(exerciseLines);
+            }
+            else
+            {
+                strengthLines.Add("No exercises added yet.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(session.Notes))
+            {
+                strengthLines.Add($"Notes: {session.Notes}");
+            }
+
+            return string.Join("\n", strengthLines);
+        }
+
     }
 }
