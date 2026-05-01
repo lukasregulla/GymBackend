@@ -49,8 +49,9 @@ namespace GymBackend.Service
             {
                 Username = registerRequest.Username,
                 Email = registerRequest.Email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password)
-            };
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password),
+                EmailConfirmed = true
+                };
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
@@ -86,7 +87,7 @@ namespace GymBackend.Service
   </p>
 </div>";
 
-            await _emailService.SendAsync(user.Email, "Confirm your email", body);
+            //await _emailService.SendAsync(user.Email, "Confirm your email", body);
 
             return new AuthResponseDto
             {
@@ -103,10 +104,10 @@ namespace GymBackend.Service
             {
                 throw new UnauthorizedException("Invalid email or password.");
             }
-            if (!user.EmailConfirmed)
-            {
-                throw new UnauthorizedException("Please confirm your email before logging in.");
-            }
+            //if (!user.EmailConfirmed)
+            //{
+            //    throw new UnauthorizedException("Please confirm your email before logging in.");
+            //}
             return new AuthResponseDto
             {
                 Token = GenerateJwtToken(user),
