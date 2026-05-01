@@ -29,10 +29,6 @@ namespace GymBackend.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
-            catch (Exception)
-            {
-                return StatusCode(500, new { message = "An error occurred while processing your request." });
-            }
         }
 
         [HttpPost("login")]
@@ -73,16 +69,9 @@ namespace GymBackend.Controllers
 
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDto request)
-        {
-            try
-            {
+        {   
                 await _authService.ForgotPasswordAsync(request);
-                return Ok(new { message = "If that email exists, a reset link has been sent." });
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { message = "An error occurred while processing your request." });
-            }
+                return Ok(new { message = "If that email exists, a reset link has been sent." });     
         }
 
         [HttpPost("reset-password")]
