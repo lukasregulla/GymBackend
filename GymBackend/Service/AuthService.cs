@@ -62,7 +62,7 @@ namespace GymBackend.Service
             await _context.SaveChangesAsync();
 
             var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(rawToken));
-            var link = $"{_configuration["Frontend:BaseUrl"]}/confirm-email?userId={user.Id}&token={encodedToken}";
+            var link = $"{_configuration["FrontendUrl"]}/confirm-email?userId={user.Id}&token={encodedToken}";
 
             var body = $@"
 <div style=""font-family:Arial,sans-serif;line-height:1.6;color:#111;max-width:560px;margin:0 auto;padding:24px;"">
@@ -152,7 +152,7 @@ namespace GymBackend.Service
             await _context.SaveChangesAsync();
 
             var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(rawToken));
-            var link = $"{_configuration["Frontend:BaseUrl"]}/reset-password?email={Uri.EscapeDataString(request.Email)}&token={encodedToken}";
+            var link = $"{_configuration["FrontendUrl"]}/reset-password?email={Uri.EscapeDataString(request.Email)}&token={encodedToken}";
 
             var body = $@"
 <div style=""font-family:Arial,sans-serif;line-height:1.6;color:#111;max-width:560px;margin:0 auto;padding:24px;"">
@@ -179,7 +179,7 @@ namespace GymBackend.Service
   </p>
 
   <p style=""font-size:14px;color:#555;margin:0;"">
-    If you didn’t request this, you can safely ignore this email.
+    If you didnï¿½t request this, you can safely ignore this email.
   </p>
 </div>";
 

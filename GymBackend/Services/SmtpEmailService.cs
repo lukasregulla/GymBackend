@@ -7,10 +7,12 @@ namespace GymBackend.Services
     public class SmtpEmailService : IEmailService
     {
         private readonly IConfiguration _configuration;
+        private readonly ILogger<SmtpEmailService> _logger;
 
-        public SmtpEmailService(IConfiguration configuration)
+        public SmtpEmailService(IConfiguration configuration, ILogger<SmtpEmailService> logger)
         {
             _configuration = configuration;
+            _logger = logger;
         }
 
         public async Task SendAsync(string to, string subject, string body)
@@ -21,15 +23,22 @@ namespace GymBackend.Services
             var pass = _configuration["Smtp:Pass"]!;
             var from = _configuration["Smtp:From"]!;
 
-            using var client = new SmtpClient(host, port)
+            try
             {
-                Credentials = new NetworkCredential(user, pass),
-                EnableSsl = true
-            };
-
-            var message = new MailMessage(from, to, subject, body);
-            message.IsBodyHtml = true;
-            await client.SendMailAsync(message);
+                using var client = new SmtpClient(host, port)
+                {
+                    Credentials = new NetworkCredential(user, pass),
+                    EnableSsl = true
+                };
+                using var message = new MailMessage(from, to, subject, body) { IsBodyHtml = true };
+                await client.SendMailAsync(message);
+                _logger.LogInformation("Email sent to {To} via {Host}:{Port}", to, host, port);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "SMTP failure sending to {To} via {Host}:{Port}", to, host, port);
+                throw;
+            }
         }
     }
 }
